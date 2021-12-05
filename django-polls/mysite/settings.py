@@ -13,15 +13,16 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 import json
 import logging.config
+from pathlib import Path
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Build paths inside the project like this: Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-6wn+t1ujk2z-9+m)e-xzifkp@b(1y6zo1#i&u$8a=$dv1*0f-n')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', False)
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,11 +78,11 @@ DATABASES = {
          'ENGINE': 'django.db.backends.{}'.format(
              os.getenv('DATABASE_ENGINE', 'sqlite3')
          ),
-         'NAME': os.getenv('DATABASE_NAME', 'polls'),
-         'USER': os.getenv('DATABASE_USERNAME', 'myprojectuser'),
-         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'password'),
+         'NAME': os.getenv('DATABASE_NAME', BASE_DIR / 'db.sqlite3'),
+         'USER': os.getenv('DATABASE_USERNAME', ''),
+         'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
          'HOST': os.getenv('DATABASE_HOST', '127.0.0.1'),
-         'PORT': os.getenv('DATABASE_PORT', 5432),
+         'PORT': os.getenv('DATABASE_PORT', None),
          'OPTIONS': json.loads(
              os.getenv('DATABASE_OPTIONS', '{}')
          ),
@@ -121,24 +122,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-# Moving static assets to DigitalOcean Spaces as per:
-# https://www.digitalocean.com/community/tutorials/how-to-set-up-object-storage-with-django
-AWS_ACCESS_KEY_ID = os.getenv('STATIC_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('STATIC_SECRET_KEY')
-
-AWS_STORAGE_BUCKET_NAME = os.getenv('STATIC_BUCKET_NAME')
-AWS_S3_ENDPOINT_URL = os.getenv('STATIC_ENDPOINT_URL')
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-AWS_LOCATION = 'static'
-AWS_DEFAULT_ACL = 'public-read'
-AWS_QUERYSTRING_AUTH = False
-
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-STATIC_URL = '{}/{}/'.format(AWS_S3_ENDPOINT_URL, AWS_LOCATION)
-STATIC_ROOT = 'static/'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Logging Configuration
 
