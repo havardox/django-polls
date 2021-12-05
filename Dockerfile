@@ -1,4 +1,4 @@
-FROM 3.11.0a2-alpine3.15
+FROM python:3.11.0a2-alpine3.15
 
 ADD django-polls/requirements.txt /app/requirements.txt
 
